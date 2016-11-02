@@ -9,6 +9,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.LayoutStyle.ComponentPlacement;
 
 
 public class AppSkin extends JFrame {
@@ -34,7 +35,7 @@ public class AppSkin extends JFrame {
 	ImageIcon play = new ImageIcon(this.getClass().getResource("playButton.png"));
 	ImageIcon pause = new ImageIcon(this.getClass().getResource("pauseButton.png"));
 	ImageIcon previous = new ImageIcon(this.getClass().getResource("previousButton.png"));
-	ImageIcon skip = new ImageIcon(this.getClass().getResource("skipButton.png"));
+	ImageIcon next = new ImageIcon(this.getClass().getResource("skipButton.png"));
 
 	boolean playing=false;
 	/**
@@ -48,35 +49,48 @@ public class AppSkin extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
-		JLabel playLabel = new JLabel("");
-		playLabel.setIcon(play);
-		playLabel.addMouseListener(new MouseAdapter() {
+		JLabel playPauseLabel = new JLabel("");
+		playPauseLabel.setIcon(play);
+		playPauseLabel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				if(playing){
 					playing=false;
-					playLabel.setIcon(pause);
+					playPauseLabel.setIcon(pause);
 				}else{
 					playing=true;
-					playLabel.setIcon(play);
+					playPauseLabel.setIcon(play);
 				}
 			}
 		});
+		
+		JLabel previousLabel = new JLabel("");
+		previousLabel.setIcon(previous);
+		
+		JLabel nextLabel = new JLabel("");
+		nextLabel.setIcon(next);
 		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGap(191)
-					.addComponent(playLabel)
-					.addContainerGap(197, Short.MAX_VALUE))
+					.addGap(139)
+					.addComponent(previousLabel)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(playPauseLabel)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(nextLabel)
+					.addContainerGap(163, Short.MAX_VALUE))
 		);
 		gl_contentPane.setVerticalGroup(
-			gl_contentPane.createParallelGroup(Alignment.TRAILING)
-				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGap(40)
-					.addComponent(playLabel)
-					.addContainerGap(47, Short.MAX_VALUE))
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addComponent(nextLabel)
+						.addComponent(previousLabel)
+						.addComponent(playPauseLabel))
+					.addContainerGap(21, Short.MAX_VALUE))
 		);
 		contentPane.setLayout(gl_contentPane);
 		
