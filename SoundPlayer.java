@@ -6,6 +6,11 @@ public class SoundPlayer {
     private static AudioFormat format;
     private static DataLine.Info info;
     private static Clip clip;
+    public static boolean repeat;
+
+    public SoundPlayer() {
+        this.repeat = false;
+    }
 
 
     // The code hangs after the song finishes playing
@@ -17,6 +22,14 @@ public class SoundPlayer {
 
 	        clip = (Clip) AudioSystem.getLine(info);
 	        clip.open(audioStream);
+
+            if(repeat) {
+                clip.loop(clip.LOOP_CONTINUOUSLY);
+            }
+            else {
+                clip.loop(0);
+            }
+
 	        clip.start();
             long length = clip.getMicrosecondLength()*1000;
 
@@ -36,6 +49,8 @@ public class SoundPlayer {
         catch(IOException ioe) {
            ioe.printStackTrace();
         }
+
+        clip.close();
     }
 }
 
