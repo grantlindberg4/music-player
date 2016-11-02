@@ -12,6 +12,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JTable;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.ListSelectionModel;
 
 
 public class AppSkin extends JFrame {
@@ -39,7 +41,10 @@ public class AppSkin extends JFrame {
 	ImageIcon previous = new ImageIcon(this.getClass().getResource("previousButton.png"));
 	ImageIcon next = new ImageIcon(this.getClass().getResource("skipButton.png"));
 	ImageIcon shuffle = new ImageIcon(this.getClass().getResource("shuffleButton.png"));
-	ImageIcon repeat = new ImageIcon(this.getClass().getResource("repeatButton.png"));
+	ImageIcon shuffleOff = new ImageIcon(this.getClass().getResource("shuffleOffButton.png"));
+	ImageIcon repeatOn = new ImageIcon(this.getClass().getResource("repeatButton.png"));
+	ImageIcon repeatOff = new ImageIcon(this.getClass().getResource("repeatOffButton.png"));
+	ImageIcon repeat1 = new ImageIcon(this.getClass().getResource("repeatOneButton.png"));
 	ImageIcon backgroundPic = new ImageIcon(this.getClass().getResource("background.png"));
 
 	String[] columes = {"Title", "Artist", "Length", "Album", "Count"};
@@ -84,17 +89,20 @@ public class AppSkin extends JFrame {
 		repeatLabel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				if(!repeatAll){
+				if(!repeatAll && !repeatOne){
 					repeatAll=true;
-				}else if(repeatAll){
+					repeatLabel.setIcon(repeatOn);
+				}else if(repeatAll && !repeatOne){
 					repeatAll=false;
 					repeatOne=true;
-				}else{
+					repeatLabel.setIcon(repeat1);
+				}else if(!repeatAll && repeatOne){
 					repeatOne=false;
+					repeatLabel.setIcon(repeatOff);
 				}
 			}
 		});
-		repeatLabel.setIcon(repeat);
+		repeatLabel.setIcon(repeatOff);
 		
 		JLabel shuffleLabel = new JLabel("");
 		shuffleLabel.setBounds(398, 219, 36, 36);
@@ -103,20 +111,16 @@ public class AppSkin extends JFrame {
 			public void mouseClicked(MouseEvent arg0) {
 				if(!shuffleOn){
 					shuffleOn=true;
+					shuffleLabel.setIcon(shuffle);
 				}else{
 					shuffleOn=false;
+					shuffleLabel.setIcon(shuffleOff);
 				}
 			}
 		});
-		shuffleLabel.setIcon(shuffle);
-		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(15, 16, 414, 181);
-		
-		table = new JTable(data, columes);
-		scrollPane.setColumnHeaderView(table);
+		shuffleLabel.setIcon(shuffleOff);
 		contentPane.setLayout(null);
-		
+				
 		
 		JLabel playPauseLabel = new JLabel("");
 		playPauseLabel.setBounds(15, 215, 40, 40);
@@ -133,8 +137,18 @@ public class AppSkin extends JFrame {
 				}
 			}
 		});
-		contentPane.add(playPauseLabel);
+		contentPane.setLayout(null);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(15, 11, 419, 193);
 		contentPane.add(scrollPane);
+		
+		table = new JTable(data, columes);
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		table.setShowHorizontalLines(false);
+		table.setDragEnabled(true);
+		scrollPane.setViewportView(table);
+		contentPane.add(playPauseLabel);
 		contentPane.add(previousLabel);
 		contentPane.add(nextLabel);
 		contentPane.add(repeatLabel);
