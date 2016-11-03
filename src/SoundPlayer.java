@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.*;
 import javax.sound.sampled.*;
 
 public class SoundPlayer {
@@ -9,11 +10,21 @@ public class SoundPlayer {
     public static boolean repeat;
 
     public SoundPlayer() {
-        this.repeat = false;
+        SoundPlayer.repeat = false;
     }
 
+    public void play(ArrayList<File> songList) {
+        for(int i = 0; i < songList.size(); i++) {
+            play(songList.get(i));
+            try {
+                Thread.sleep(1000);
+            }
+            catch(InterruptedException ie) {
+                ie.printStackTrace();
+            }
+        }
+    }
 
-    // The code hangs after the song finishes playing
     public static void play(File song) {
         try {
 	        audioStream = AudioSystem.getAudioInputStream(song);
@@ -31,7 +42,7 @@ public class SoundPlayer {
             }
 
 	        clip.start();
-            long length = clip.getMicrosecondLength()*1000;
+            long length = clip.getMicrosecondLength()/1000;
 
             try {
                 Thread.sleep(length);
@@ -53,4 +64,3 @@ public class SoundPlayer {
         clip.close();
     }
 }
-
