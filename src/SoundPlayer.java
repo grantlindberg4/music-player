@@ -2,15 +2,27 @@ import java.io.*;
 import java.util.*;
 import javax.sound.sampled.*;
 
+enum LoopSetting {
+	NEVER,
+	ONCE,
+	INFINITELY
+}
+
 public class SoundPlayer {
     private static AudioInputStream audioStream;
     private static AudioFormat format;
     private static DataLine.Info info;
     private static Clip clip;
-    public static boolean repeat;
+    private static long songTime;
+    public static LoopSetting repeat;
+    public static boolean playing;
+    public static int songIndex;
 
     public SoundPlayer() {
-        SoundPlayer.repeat = false;
+    	SoundPlayer.repeat = LoopSetting.NEVER;
+        SoundPlayer.playing = false;
+        SoundPlayer.songTime = 0;
+        SoundPlayer.songIndex = 0;
     }
 
     public void play(ArrayList<File> songList) {
@@ -26,6 +38,7 @@ public class SoundPlayer {
     }
 
     public static void play(File song) {
+    	playing = true;
         try {
 	        audioStream = AudioSystem.getAudioInputStream(song);
 	        format = audioStream.getFormat();
@@ -33,23 +46,15 @@ public class SoundPlayer {
 
 	        clip = (Clip) AudioSystem.getLine(info);
 	        clip.open(audioStream);
-
-            if(repeat) {
-                clip.loop(clip.LOOP_CONTINUOUSLY);
-            }
-            else {
-                clip.loop(0);
-            }
-
 	        clip.start();
-            long length = clip.getMicrosecondLength()/1000;
+//            long length = clip.getMicrosecondLength()/1000;
 
-            try {
-                Thread.sleep(length);
-            }
-            catch(InterruptedException ie) {
-                ie.printStackTrace();
-            }
+//            try {
+//                Thread.sleep(100);
+//            }
+//            catch(InterruptedException ie) {
+//                ie.printStackTrace();
+//            }
         }
         catch(UnsupportedAudioFileException uafe) {
             uafe.printStackTrace();
@@ -60,7 +65,54 @@ public class SoundPlayer {
         catch(IOException ioe) {
            ioe.printStackTrace();
         }
+    }
 
-        clip.close();
+//    public static void stop() {
+//    	if(clip != null) {
+//    		if(paused) {
+//    			pause();
+//    		}
+//    		if(clip.isActive()) {
+//    			repeat = LoopSetting.NEVER;
+//    			clip.stop();
+//    			clip.flush();
+//    			clip.close();
+//    			paused = false;
+//    			songTime = 0;
+//    		}
+//    	}
+//    }
+
+    public static void pause() {
+    	playing = false;
+    	if(clip == null || !clip.isOpen()) {
+    		return;
+    	}
+    	if(playing) {
+    		clip.setMicrosecondPosition(songTime);
+    		clip.start();
+    	}
+    	else {
+    		songTime = clip.getMicrosecondPosition();
+    		clip.stop();
+    	}
+    }
+
+    public static void setRepeat() {
+    	if(clip == null || !clip.isOpen()) {
+    		repeat = LoopSetting.NEVER;
+    		return;
+    	}
+    	switch(repeat) {
+    		case NEVER:
+    			clip.loop(0);
+    			break;
+    		case ONCE:
+    			clip.loop(1);
+    			break;
+    		case INFINITELY:
+    			clip.loop(clip.LOOP_CONTINUOUSLY);
+    			break;
+    	}
     }
 }

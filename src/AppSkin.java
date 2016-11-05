@@ -53,7 +53,7 @@ public class AppSkin extends JFrame {
 	String[] columns = {"Title", "Artist", "Length", "Album", "Count"};
 	String[][] data = {{"Victorious", "Panic! At the Disco", "2:58", "Death of a Bachelor", "0"}};
 
-	boolean playing=false;
+	// Break this into the SoundPlayer class
 	boolean shuffleOn=false;
 	boolean repeatAll=false;
 	boolean repeatOne=false;
@@ -135,13 +135,17 @@ public class AppSkin extends JFrame {
 		playPauseLabel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				if(playing){
-					playPauseLabel.setIcon(pause);
-				}else{
+				if(SoundPlayer.playing){
 					playPauseLabel.setIcon(play);
-				}
+					SoundPlayer.pause();
 
-				playing = !playing;
+				}
+				else {
+					playPauseLabel.setIcon(pause);
+//					soundPlayer.play(songList);
+					File currSong = songList.get(SoundPlayer.songIndex);
+					SoundPlayer.play(currSong);
+				}
 			}
 		});
 		contentPane.setLayout(null);
@@ -186,7 +190,5 @@ public class AppSkin extends JFrame {
 		songList.add(song7);
 		File song8 = new File("src/sounds/beep7.wav");
 		songList.add(song8);
-
-		soundPlayer.play(songList);
 	}
 }
